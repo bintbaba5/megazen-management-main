@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "megazen-inventory",
+  "private_key_id": "0540dd47a57f70a5be3ab1cfddd20394c2e7a623",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC2IW7wbG3eKkKq\nRAs3vspmZaxQYq5rsDOaOS3q/tyzQ/wiwk2WTi1C/bbJWY7AQ3o1M8AQfWGhXdj9\ni8SVhGd/g/EnkmCxrozxaI9JprJbu8DlwcEYwLDx74I69F6/0PHVQQUfd8piGiW/\nAEZFuKfAdT5XZXOiYqYcDVW+T9KwITkutOkFn9tPgUW2RWHSwe+OQnXrT8ndtTj6\ndM7IGgWOfRaNkZ7mBr/GHZWm7D1zHaZPOrYVJ9iB7JLt+MHzvBvDYAsI/dBuKUQs\n5VgZAWXuQed8g0hrV/w61yyuDDXVYuj7tkpY5xgsgJ5PM8mLiHApgBNIOX1GwWRe\n7jQ/7ozbAgMBAAECggEAHO963J+dZOp55OsijRy2s0X79ll3NIyt5hangOo0zhZC\n/JK6GOMatcXxQFQGJe2SgNlT7kq9NBHg44dNGCQM/WlM6uiKjDAbHE9sVFszgvd1\nUgtSTkhu1EElA5DHbNoZUbQeyD0T3johPRMiFvmbTSxTVzc7A9WAZnyH3tB3vJuG\nCCcjTANhfUpoarBFGBBJuwBt7COzE6MJtb5KG9/L+SxTGA8njaPH21lB9XIFA1BR\nWiGH1fDv4D3ihoSnT5yjYBFK9LWl5pkPuqWBCoybQ8Iq+i8eFpTv9ypli6Li68tL\nrCw/Lob75lBL4mB3Qxy/ITG/6jVcGEsSvuZJON4gAQKBgQDa0IhnVerGJNUsiQ0J\nPOZG+0unXT/4moXLp8CbSKEzzyxMx3oJMsneLhkZ5RNd0IwThpBBkql/WTSkvrNK\nGmNwQwbJjINZlW6XAkPZZHnLMbFsjLO6ocxtvW6R2zxgNgId8ihceweXCqAb7KKl\nDPoFQp/IeLB89t1C4gQ17XpY2wKBgQDVFPlhDkCaBLZiBo1sJgCX31PSRzYYFuBr\nocaYi+pRFY87jZXGXOeToA39tPbPLZmfHZFT+DJ6LM5JJY4aNxLE9Ma9v7vNMK2J\n9xDuVDTZYBT8c9c34zzp83dwFycz+IZ5OYzc+yCmRqeDAfsF6yHicgRb03AQAdK/\nMJIROcjcAQKBgQCI96WagYZfF2k04mj9klhWsDBwCAfmFtuPWmdPDEyTwKfrO6Yh\nIeCIqfReaC0SOVulUUL1ONfOdklkolZaGWCLQfl6qfECX26FKg7Mgn9WeLmlyAEs\n3uC3BK+0rzYAx23VzuIC2aQroKQONraseA38wvJ/q0RWRLTFi/K0yv0dpwKBgQCg\ncWmRVgz4q+G0j+B+9WJu+L8Bz5MAsoELKkYCaR/nLAesvOBw+1V3yAWg6lkJCPnq\nYHYkNvezHPe7BicowB1G5lSbXbqIN0YEY1+BRTCCGSHUMVl1gIpGUoe1hAmFzXVb\n5CSX5BPif8L0F1KvUywxeM6lYeC4fNb2FRl3FP6UAQKBgEY5A7sg/Y1yxC7E4rfE\nXsFBV/mQ6C0l6g1eNys2+RrSbD4rUVU6x25BqEILPSbP3qoEzwn/++dSAgTtknDv\nn7oPbpTjyOWSs4BsOi9PfGZGx18/70O5f6KEktPLGBDsQf/4ZqAIJ7aj1WrB6zKC\nl5glVlDA+I4tW+Q+p/qwaYyf\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ka62r@megazen-inventory.iam.gserviceaccount.com",
+  "client_id": "106120135990508618651",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ka62r%40megazen-inventory.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

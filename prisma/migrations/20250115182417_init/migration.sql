@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Sales" ADD COLUMN     "payedAmount" DOUBLE PRECISION NOT NULL DEFAULT 0.0;

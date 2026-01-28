@@ -1,0 +1,342 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String          @id @default(cuid())
+  name              String?
+  email             String          @unique
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  password          String?
+  roleId            String?
+  notificationToken String?
+  isDeleted         Boolean         @default(false)
+  accounts          Account[]
+  audits            Audits[]
+  Authenticator     Authenticator[]
+  notifications     Notification[]
+  sessions          Session[]
+  role              Role?           @relation("UserRole", fields: [roleId], references: [id])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  users       User[]       @relation("UserRole")
+  permissions Permission[] @relation("RolePermissions")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       Role[]   @relation("RolePermissions")
+}
+
+model Categories {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(255)
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  products    Products[]
+}
+
+model Products {
+  name                   String
+  description            String?
+  categoryId             Int?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @default(now()) @updatedAt
+  productId              Int                      @id @default(autoincrement())
+  isDeleted              Boolean                  @default(false)
+  Inventory              Inventory[]
+  category               Categories?              @relation(fields: [categoryId], references: [id])
+  PurchaseOrderLineItems PurchaseOrderLineItems[]
+  SalesOrderLineItems    SalesOrderLineItems[]
+  StockTransfers         StockTransfers[]
+}
+
+model Inventory {
+  lastUpdated          DateTime         @default(now()) @updatedAt
+  productId            Int
+  inventoryId          Int              @id @default(autoincrement())
+  locationId           Int
+  quantity             Int              @default(0)
+  isLowStock           Boolean          @default(false)
+  lowStockLevel        Int?
+  isDeleted            Boolean          @default(false)
+  audits               Audits[]
+  location             Locations        @relation("InventoryLocations", fields: [locationId], references: [locationId])
+  product              Products         @relation(fields: [productId], references: [productId])
+  movements            StockMovements[]
+  destinationTransfers StockTransfers[] @relation("DestinationInventory")
+  sourceTransfers      StockTransfers[] @relation("SourceInventory")
+
+  @@unique([productId, locationId])
+}
+
+model StockMovements {
+  quantity    Int
+  timestamp   DateTime     @default(now())
+  movementId  Int          @id @default(autoincrement())
+  auditId     Int?
+  inventoryId Int
+  type        MovementType
+  audit       Audits?      @relation(fields: [auditId], references: [auditId])
+  inventory   Inventory    @relation(fields: [inventoryId], references: [inventoryId])
+}
+
+model StockTransfers {
+  productId              Int
+  quantity               Int
+  timestamp              DateTime  @default(now())
+  transferId             Int       @id @default(autoincrement())
+  auditId                Int?
+  destinationInventoryId Int
+  sourceInventoryId      Int
+  audit                  Audits?   @relation(fields: [auditId], references: [auditId])
+  destinationInventory   Inventory @relation("DestinationInventory", fields: [destinationInventoryId], references: [inventoryId])
+  product                Products  @relation(fields: [productId], references: [productId])
+  sourceInventory        Inventory @relation("SourceInventory", fields: [sourceInventoryId], references: [inventoryId])
+
+  @@index([sourceInventoryId, destinationInventoryId])
+}
+
+model Audits {
+  userId      String
+  oldQuantity Int?
+  newQuantity Int
+  timestamp   DateTime         @default(now())
+  inventoryId Int?
+  auditId     Int              @id @default(autoincrement())
+  action      AuditType
+  inventory   Inventory?       @relation(fields: [inventoryId], references: [inventoryId])
+  user        User             @relation(fields: [userId], references: [id])
+  movements   StockMovements[]
+  transfers   StockTransfers[]
+}
+
+model Locations {
+  locationId          Int                   @id @default(autoincrement())
+  locationName        String
+  locationAddress     String
+  isDeleted           Boolean               @default(false)
+  inventory           Inventory[]           @relation("InventoryLocations")
+  purchases           Purchases[]
+  salesOrderLineItems SalesOrderLineItems[]
+}
+
+model Customer {
+  customerId          Int                  @id @default(autoincrement())
+  name                String
+  contact             String?
+  email               String?
+  address             String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  creditBalance       CreditBalance?
+  creditsTransactions CreditTransactions[]
+  sales               Sales[]
+}
+
+model Supplier {
+  supplierId          Int                  @id @default(autoincrement())
+  name                String
+  phone               String
+  email               String?
+  address             String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  creditBalance       CreditBalance?
+  creditsTransactions CreditTransactions[]
+  purchases           Purchases[]
+}
+
+model Sales {
+  orderDate           DateTime              @default(now())
+  dueDate             DateTime
+  status              String                @default("Pending")
+  totalAmount         Float                 @default(0.0)
+  paymentStatus       String                @default("Unpaid")
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
+  saleId              Int                   @id @default(autoincrement())
+  payedAmount         Float                 @default(0.0)
+  customerId          Int?
+  creditsTransactions CreditTransactions[]
+  customer            Customer?             @relation(fields: [customerId], references: [customerId])
+  SalesOrderLineItems SalesOrderLineItems[]
+}
+
+model SalesOrderLineItems {
+  quantity     Int       @default(1)
+  unitPrice    Float     @default(0.0)
+  totalPrice   Float     @default(0.0)
+  productId    Int
+  id           Int       @id @default(autoincrement())
+  salesOrderId Int
+  locationId   Int
+  location     Locations @relation(fields: [locationId], references: [locationId])
+  product      Products  @relation(fields: [productId], references: [productId])
+  salesOrder   Sales     @relation(fields: [salesOrderId], references: [saleId])
+}
+
+model Purchases {
+  orderDate              DateTime                 @default(now())
+  status                 String                   @default("Pending")
+  totalAmount            Float                    @default(0.0)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @default(now()) @updatedAt
+  purchaseId             Int                      @id @default(autoincrement())
+  paymentStatus          String                   @default("Unpaid")
+  locationId             Int
+  paidAmount             Float                    @default(0.0)
+  supplierId             Int?
+  creditsTransactions    CreditTransactions[]
+  PurchaseOrderLineItems PurchaseOrderLineItems[]
+  location               Locations                @relation(fields: [locationId], references: [locationId])
+  supplier               Supplier?                @relation(fields: [supplierId], references: [supplierId])
+}
+
+model PurchaseOrderLineItems {
+  quantity        Int       @default(1)
+  unitPrice       Float     @default(0.0)
+  totalPrice      Float     @default(0.0)
+  productId       Int
+  id              Int       @id @default(autoincrement())
+  purchaseOrderId Int
+  product         Products  @relation(fields: [productId], references: [productId])
+  purchaseOrder   Purchases @relation(fields: [purchaseOrderId], references: [purchaseId])
+}
+
+model Expenses {
+  expenseId   Int      @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime @default(now())
+  amount      Float    @default(0.0)
+}
+
+model CreditTransactions {
+  id          Int        @id @default(autoincrement())
+  type        String
+  customerId  Int?
+  supplierId  Int?
+  saleId      Int?
+  purchaseId  Int?
+  amount      Float
+  date        DateTime   @default(now())
+  description String?
+  customer    Customer?  @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
+  purchase    Purchases? @relation(fields: [purchaseId], references: [purchaseId], onDelete: Cascade)
+  sale        Sales?     @relation(fields: [saleId], references: [saleId], onDelete: Cascade)
+  supplier    Supplier?  @relation(fields: [supplierId], references: [supplierId], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([supplierId])
+}
+
+model CreditBalance {
+  id         Int       @id @default(autoincrement())
+  type       String
+  balance    Float     @default(0.0)
+  customerId Int?      @unique
+  supplierId Int?      @unique
+  customer   Customer? @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
+  supplier   Supplier? @relation(fields: [supplierId], references: [supplierId], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([supplierId])
+}
+
+enum MovementType {
+  SALES
+  PURCHASE
+  ADJUSTMENT
+}
+
+enum AuditType {
+  Transfer
+  Movement
+  Others
+}
+
+enum OrderType {
+  SALES
+  PURCHASE
+}
